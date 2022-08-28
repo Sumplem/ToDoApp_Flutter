@@ -40,7 +40,7 @@ class _MyRegisterState extends State<MyRegister> {
         // ignore: prefer_const_constructors
         image: DecorationImage(
             // ignore: prefer_const_constructors
-            image: AssetImage('../../images/register.png'),
+            image: AssetImage('images/register.png'),
             fit: BoxFit.cover),
       ),
       child: Scaffold(
