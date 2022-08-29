@@ -1,9 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_const_constructors, duplicate_ignore, sort_child_properties_last
 
 import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todoapp/homePage.dart';
 import 'package:todoapp/reponsive/register.dart';
@@ -77,81 +74,79 @@ Container signInSignUpButton(
 class _MyLoginState extends State<MyLogin> {
   final auth = AuthService();
   final keyForm = GlobalKey<FormState>();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-              // ignore: prefer_const_constructors
-              image: DecorationImage(
-                  image: AssetImage('images/login.png'), fit: BoxFit.cover)),
-          child: SingleChildScrollView(
-              child: Padding(
-            padding: EdgeInsets.fromLTRB(
-                20, MediaQuery.of(context).size.width * 0.4, 20, 0),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(left: 35, top: 150),
-                  child: Text(
-                    'Welcome Back',
-                    style: TextStyle(color: Colors.black, fontSize: 33),
-                  ),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+            // ignore: prefer_const_constructors
+            image: DecorationImage(
+                image: AssetImage('images/login.png'), fit: BoxFit.cover)),
+        child: SingleChildScrollView(
+            child: Padding(
+          padding: EdgeInsets.fromLTRB(
+              20, MediaQuery.of(context).size.width * 0.4, 20, 0),
+          child: Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(left: 35, top: 150),
+                child: Text(
+                  'Welcome Back',
+                  style: TextStyle(color: Colors.black, fontSize: 33),
                 ),
-                Form(
-                  key: keyForm,
-                  child: Column(
-                    children: [
-                      reusableTextField(
-                          "Email", Icons.person_outline, false, _emailController),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      reusableTextField(
-                          "Password", Icons.lock_outline, true, _passwordController),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      signInSignUpButton(context, true, () async {
-                        if(keyForm.currentState?.validate() ?? false) {
-                          dynamic result = await auth.signinWithEmailAndPassword(
-                            _emailController.text, _passwordController.text);
-                          if (result == null) {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Wrong email/password!'),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('OK')
-                                    )
-                                  ],
-                                );
-                              }
-                            );
-                          }else {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()));
-                          }
+              ),
+              Form(
+                key: keyForm,
+                child: Column(
+                  children: [
+                    reusableTextField(
+                        "Email", Icons.person_outline, false, _emailController),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    reusableTextField(
+                        "Password", Icons.lock_outline, true, _passwordController),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    signInSignUpButton(context, true, () async {
+                      if(keyForm.currentState?.validate() ?? false) {
+                        dynamic result = await auth.signinWithEmailAndPassword(
+                          _emailController.text, _passwordController.text);
+                        if (result == null) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Wrong email/password!'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('OK')
+                                  )
+                                ],
+                              );
+                            }
+                          );
+                        }else {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()));
                         }
                       }
-                      ),
-                    ],
-                  )
-                ),
-                signUpOption()
-              ],
-            ),
-          )),
-        ),
+                    }
+                    ),
+                  ],
+                )
+              ),
+              signUpOption()
+            ],
+          ),
+        )),
       ),
     );
   }

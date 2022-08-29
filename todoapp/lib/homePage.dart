@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:todoapp/models/todo.dart';
-import 'package:todoapp/reponsive/Data_reponsive.dart';
+import 'package:todoapp/reponsive/data_reponsive.dart';
 import 'package:todoapp/reponsive/login.dart';
 import 'package:todoapp/services/auth.dart';
 
@@ -40,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 builder: (context) {
                   return AlertDialog(
                     title: const Text('Delete this Todo ?'),
+                    content: Text(todo.name),
                     actions: [
                       TextButton(
                           onPressed: (() {
@@ -63,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
           statusControl = todo.status;
           showDialog(
               context: context,
+              barrierDismissible: false,
               builder: (context) {
                 return StatefulBuilder(builder: (context, setState) {
                   return AlertDialog(
@@ -109,7 +111,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     actions: [
                       TextButton(
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () {
+                            nameControl.text = '';
+                            progressControl = 0;
+                            statusControl = false;
+
+                            Navigator.pop(context);
+                          },
                           child: const Text('Cancel')),
                       TextButton(
                           onPressed: () {

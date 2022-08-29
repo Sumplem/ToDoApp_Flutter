@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
@@ -32,12 +31,12 @@ class AuthService {
       return createFromFirebaseUSer(user);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
+        //print('No user found for that email.');
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+        //print('Wrong password provided for that user.');
       }
     } catch (e) {
-      print(e.toString());
+      //print(e.toString());
       return null;
     }
   }
@@ -52,13 +51,13 @@ class AuthService {
       return createFromFirebaseUSer(user);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
+        //print('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
+        //print('The account already exists for that email.');
       }
       return null;
     } catch (e) {
-      print(e.toString());
+      //print(e.toString());
       return null;
     }
   }
@@ -68,7 +67,7 @@ class AuthService {
     try {
       return auth.signOut();
     } catch (e) {
-      print(e.toString());
+      //print(e.toString());
       return null;
     }
   }
