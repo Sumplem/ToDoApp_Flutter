@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:todoapp/models/todo.dart';
 import 'package:todoapp/reponsive/Data_reponsive.dart';
+import 'package:todoapp/reponsive/login.dart';
+import 'package:todoapp/services/auth.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -11,6 +13,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final auth = AuthService();
   final repository = DataReponsitory();
   final nameControl = TextEditingController();
   double progressControl = 0;
@@ -141,6 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Todo'),
         actions: [
           IconButton(
@@ -209,13 +213,33 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   });
                 }),
-            //style: ElevatedButton.styleFrom(shape: const CircleBorder()),
             icon: const Icon(Icons.add),
           ),
           IconButton(
-            onPressed: (){},
-            icon: const Icon(Icons.logout)
-          )
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Did you want to log out ?'),
+                        actions: [
+                          TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Cancel')),
+                          TextButton(
+                              onPressed: () async {
+                                await auth.signOut();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MyLogin()));
+                              },
+                              child: const Text('Log out'))
+                        ],
+                      );
+                    });
+              },
+              icon: const Icon(Icons.logout))
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(

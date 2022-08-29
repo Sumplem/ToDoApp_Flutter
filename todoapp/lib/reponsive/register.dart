@@ -1,6 +1,10 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_const_constructors, duplicate_ignore, sort_child_properties_last
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todoapp/reponsive/login.dart';
+import 'package:todoapp/reponsive/wrapper.dart';
+import 'package:todoapp/services/auth.dart';
 
 class MyRegister extends StatefulWidget {
   const MyRegister({Key? key}) : super(key: key);
@@ -10,154 +14,84 @@ class MyRegister extends StatefulWidget {
 }
 
 class _MyRegisterState extends State<MyRegister> {
-
-  InputDecoration textFieldDecoration(String hintText) {
-    return InputDecoration(
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            color: Colors.white,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            color: Colors.black,
-          ),
-        ),
-        hintText: hintText,
-        hintStyle: TextStyle(color: Colors.white),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ));
-  }
-
+  final auth = AuthService();
+  final keyForm = GlobalKey<FormState>();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // ignore: prefer_const_constructors
-      decoration: BoxDecoration(
-        // ignore: prefer_const_constructors
-        image: DecorationImage(
-            // ignore: prefer_const_constructors
-            image: AssetImage('images/register.png'),
-            fit: BoxFit.cover),
-      ),
-      child: Scaffold(
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
+        elevation: 0,
+        title: const Text(
+          "Sign Up",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        body: Stack(
-          children: [
-            Container(
-              padding: EdgeInsets.only(left: 35, top: 30),
-              child: Text(
-                'Create\nAccount',
-                style: TextStyle(color: Colors.white, fontSize: 33),
+      ),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+            // ignore: prefer_const_constructors
+            image: DecorationImage(
+                image: AssetImage('images/register.png'), fit: BoxFit.cover)),
+        child: SingleChildScrollView(
+            child: Padding(
+          padding: EdgeInsets.fromLTRB(
+              20, MediaQuery.of(context).size.width * 0.4, 20, 0),
+          child: Column(
+            children: <Widget>[
+              const SizedBox(
+                height: 30,
               ),
-            ),
-            SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.28),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 35, right: 35),
-                      child: Column(
-                        children: [
-                          TextField(
-                            style: TextStyle(color: Colors.white),
-                            decoration: textFieldDecoration("Name"),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          TextField(
-                            style: TextStyle(color: Colors.white),
-                            decoration: textFieldDecoration("Email")
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          TextField(
-                            style: TextStyle(color: Colors.white),
-                            decoration: textFieldDecoration("User name")
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          TextField(
-                            style: TextStyle(color: Colors.white),
-                            obscureText: true,
-                            decoration: textFieldDecoration("Password")
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          TextField(
-                            style: TextStyle(color: Colors.white),
-                            decoration: textFieldDecoration("Phone number")
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Sign Up',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 27,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                              CircleAvatar(
-                                radius: 30,
-                                backgroundColor: Color(0xff4c505b),
-                                child: IconButton(
-                                    color: Colors.white,
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.arrow_forward,
-                                    )),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 40,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, 'login');
-                                },
-                                child: Text(
-                                  'Sign In',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      color: Colors.white,
-                                      fontSize: 18),
-                                ),
-                                style: ButtonStyle(),
-                              ),
-                            ],
-                          )
-                        ],
+              Form(
+                  key: keyForm,
+                  child: Column(
+                    children: [
+                      reusableTextField("Enter Email", Icons.person_outline,
+                          false, _emailController),
+                      const SizedBox(
+                        height: 30,
                       ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+                      reusableTextField("Enter Password", Icons.person_outline,
+                          true, _passwordController),
+                      signInSignUpButton(context, false, () async {
+                        if (keyForm.currentState?.validate() ?? false) {
+                          dynamic result = await auth.registerWithEmailAndPass(
+                              _emailController.text, _passwordController.text);
+                          if (result == null) {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text("Can't register!"),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('OK'))
+                                    ],
+                                  );
+                                });
+                          } else {
+                            await auth.registerWithEmailAndPass(
+                                _emailController.text,
+                                _passwordController.text);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Wrapper()));
+                          }
+                        }
+                      })
+                    ],
+                  ))
+            ],
+          ),
+        )),
       ),
     );
   }
